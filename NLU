@@ -1,0 +1,29 @@
+pip install ibm-watson
+
+
+
+
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_watson.natural_language_understanding_v1 import Features, EntitiesOptions, KeywordsOptions, SentimentOptions
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+apikey = 'paste_API_KEY'
+url = 'paste_URL'
+
+authenticator = IAMAuthenticator(apikey)
+nlu = NaturalLanguageUnderstandingV1(
+    version='2022-04-07',
+    authenticator=authenticator
+)
+
+nlu.set_service_url(url)
+
+response = nlu.analyze(
+    text="IBM Watson is a excelent tool for natural language understanding.",
+    features=Features(
+        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2),
+        sentiment=SentimentOptions()
+    )
+).get_result()
+
+print(response)
