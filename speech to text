@@ -1,26 +1,22 @@
 pip install ibm-watson
 
 
-from ibm_watson import TextToSpeechV1
+from ibm_watson import SpeechToTextV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from IPython.display import Audio
 
-api_key = 'paste_APIkey'
-url = 'paste_URL'
+
+api_key = 'paste_APIKEY'
+url = 'Paste_URL'
 
 authenticator = IAMAuthenticator(api_key)
-tts = TextToSpeechV1(authenticator=authenticator)
-tts.set_service_url(url)
+speech_to_text = SpeechToTextV1(authenticator=authenticator)
+speech_to_text.set_service_url(url)
 
+with open('Hello Welcome to IBM.wav', 'rb') as audio_file:
+    result = speech_to_text.recognize(
+        audio=audio_file,
+        content_type='audio/wav'
+    ).get_result()
 
-text = "A lovely little girl was holding two apples in her hands. Her mom came in and softly asked her little daughter with a smile, “My sweetie, could you give your mom one of your two apples?” The girl looked up at her mom for some seconds, then she suddenly took a quick bite on one apple, and then quickly on the other. The mom felt the smile on her face freeze. She tried hard not to reveal her disappointment. Then the little girl handed one of her bitten apples to her mom, and said, “Mommy, here you are. This is the sweeter one."
-response = tts.synthesize(
-    text,
-    voice='en-AU_HeidiExpressive',
-    accept='audio/mp3'
-).get_result()
+print(result['results'][0]['alternatives'][0]['transcript'])
 
-with open('output.mp3', 'wb') as audio_file:
-    audio_file.write(response.content)
-
-Audio('output.mp3')
